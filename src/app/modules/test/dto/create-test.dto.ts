@@ -1,11 +1,11 @@
-import { IsInt, IsOptional } from "class-validator";
+import { IsInt, IsNumberString, IsOptional } from "class-validator";
 
 export class CreateTestDto {
 
-    @IsInt()
-    numero1?: number;
+    @IsNumberString()
+    numero1?: string;
 
-    @IsInt()
-    numero2?: number;
+    @IsNumberString()
+    numero2?: string;
 
 }

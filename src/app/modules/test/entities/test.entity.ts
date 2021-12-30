@@ -17,7 +17,7 @@ export class TestEntity extends MapperEntity {
     resultado?: string;
 
     beforeInsert(): TestEntity {
-        this.resultado = "" + (Number(this.numero1) * Number(this.numero2))
+        this.resultado = (BigInt(this.numero1) * BigInt(this.numero2)).toString()
         return this
     }
 
