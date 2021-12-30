@@ -1,0 +1,52 @@
+service: prueba-indra
+frameworkVersion: '2'
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 128
+  timeout: 900
+  stage: ${opt:stage,'dev'}
+  deploymentBucket:
+    name: serverless-deployment-bucket1
+  lambdaHashingVersion: 20201221
+  region: us-west-2
+  apiGateway:
+    shouldStartNameWithService: true
+package:
+  excludeDevDependencies: true
+  patterns:
+    - '!**'
+    - 'dist/**'
+custom:
+  stages:
+    - dev
+    - qas
+    - prd
+  MEMORYSIZE:
+    dev: 128
+    qas: 128
+    prd: 512
+functions:
+  api:
+    handler: dist/lambda.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
+    layers:
+      - arn:aws:lambda:us-west-2:206284375225:layer:coky-lambda-layer1:3
+    environment:
+      NODE_ENV: ${self:provider.stage}
+      APP_KEY: ${ssm:MUNDOFIT_APP_KEY}
+      JWT_KEY: ${ssm:MUNDOFIT_JWT_KEY}
+      DB_HOST: ${ssm:MUNDOFIT_DB_HOST}
+      DB_USER: ${ssm:MUNDOFIT_DB_USER}
+      DB_PASSWORD: ${ssm:MUNDOFIT_DB_PASSWORD}
+      DB_NAME: prueba_indra
+plugins:
+  - serverless-stage-manager
